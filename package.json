@@ -1,0 +1,37 @@
+{
+  "name": "adam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-js-minify": "^0.0.3"
+  },
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "latest",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^3.9.2",
+    "gulp-coffee": "latest",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.2.0",
+    "gulp-htmlclean": "^2.7.16",
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-inject": "^4.3.0",
+    "gulp-js-minify": "0.0.3",
+    "gulp-livereload": "^3.8.1",
+    "gulp-replace": "^0.6.1",
+    "gulp-ruby-sass": "^3.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-server-livereload": "^1.9.2",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "latest",
+    "gulp-webserver": "^0.9.1",
+    "run-sequence": "^2.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
