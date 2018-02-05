@@ -1,11 +1,14 @@
 
+
+
+console.log("sfddf")
+
+
 // var temperatures=[]
 
 // for (var i = 0; i < 200000; i++) {
 //     temperatures[i] = '"125","456","789"';
 // }
-
-console.log("sdsf")
 
 // localStorage.setItem("temperatures",  JSON.stringify(temperatures));
 

@@ -15,7 +15,13 @@ cleanCSS = require('gulp-clean-css'),
 concat = require('gulp-concat'),
 uglify = require('gulp-uglify'),
 del = require('del'),
+jshint = require('gulp-jshint'),
 replace = require('gulp-replace'),
+fail = require('gulp-fail'),
+gulpIf = require('gulp-if'),
+jshint = require('gulp-jshint'),
+jscs = require('gulp-jscs'),
+jscsStylish = require('gulp-jscs-stylish'),
 concat = require('gulp-concat');
 
 var paths = {
@@ -42,8 +48,9 @@ gulp.task('css',['sass'], function () {
 	return gulp.src(paths.srcCSS).pipe(gulp.dest(paths.tmp));
 });
 
-gulp.task('js', function () {
-	return gulp.src(paths.srcJS).pipe(gulp.dest(paths.tmp));
+gulp.task('js',['lint'], function () {
+	return gulp.src(paths.srcJS)
+	.pipe(gulp.dest(paths.tmp));
 });
 
 gulp.task('copy', ['html', 'css', 'js']);
@@ -84,7 +91,7 @@ gulp.task('css:dist',['sass'], function () {
 	.pipe(cleanCSS())
 	.pipe(gulp.dest(paths.dist));
 });
-gulp.task('js:dist', function () {
+gulp.task('js:dist',['lint'], function () {
 	return gulp.src(paths.srcJS)
 	.pipe(concat('script.min.js'))
 	.pipe(uglify())
@@ -92,6 +99,7 @@ gulp.task('js:dist', function () {
 });
 
 gulp.task('copy:dist', ['html:dist', 'css:dist', 'js:dist']);
+
 gulp.task('inject:dist', ['copy:dist'], function () {
 	var js = fs.readFileSync(paths.dist + '/script.min.js', 'utf8');
 	var css = fs.readFileSync(paths.dist + '/style.min.css', 'utf8');
@@ -117,4 +125,17 @@ gulp.task('clean', function () {
 	del([paths.tmp, paths.dist,paths.srcCSS]);
 });
 
+gulp.task('lint', function() {
+	var jscsFailed = false;
+
+	return gulp.src(paths.srcJS)
+	.pipe(jshint())
+	.pipe(jscs())
+	.pipe(jscsStylish.combineWithHintResults())
+	.pipe(jshint.reporter('jshint-stylish'))
+	.pipe(gulpIf(function(file) {
+		return ((file.jscs && !file.jscs.success)
+			|| (file.jshint && !file.jshint.success));
+	}, fail("Linting finished with errors!", true)));
+})
 
