@@ -8,7 +8,7 @@
 </head>
 <body>
 	<div>
-		<h1>ECAP Temperature Regulator</h1>
+		<h1>ECAP Temperature Controller</h1>
 		<h3>Tk3: 254</h3>
 		<h3>Tk2: 254</h3>
 		<h2>Tk1: 50</h2>
@@ -16,8 +16,8 @@
 	</div>
 	<div id="control">
 		<input type="text" id="myText" value="Change Setpoint"><br>
-		<button onclick="myFunction()">Start regulator</button><br>
-		<button onclick="myFunction()">Save to excel</button><br>
+		<button onclick="startController()">Start controller</button><br>
+		<button onclick="saveDataToExcel()">Save to excel</button><br>
 		<input type="checkbox" onclick="checkFluency()"  id="fluency" checked />Save to excel after close<br>
 	</div>
 	<a hidden id="export" class="myButton" download="" href="#">export</a>
