@@ -6,13 +6,14 @@
     "requireParenthesesAroundIIFE": true,
     "maximumLineLength": 120,
     "validateLineBreaks": "LF",
-    "validateIndentation": 4,
+    "validateIndentation": "\t",
     "disallowTrailingComma": true,
     "disallowUnusedParams": true,
 
     "disallowSpacesInsideObjectBrackets": null,
     "disallowImplicitTypeConversion": ["string"],
-
+    "disallowUnusedParams": true,
+    "requireUseStrict": false,
     "safeContextKeyword": "_this",
 
     "jsDoc": {
@@ -28,8 +29,7 @@
         "requireNewlineAfterDescription": true
     },
 
-    "excludeFiles": [
-        "test/data/**",
+    "excludeFiles": [        "test/data/**",
         "patterns/*"
     ]
 }
