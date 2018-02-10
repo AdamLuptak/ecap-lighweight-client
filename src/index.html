@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<!--[htmlclean-protect]-->
-	<!-- inject:css -->
-	<!-- endinject -->
-	<!--[/htmlclean-protect]-->
+	<meta charset="UTF-8">
+    <!--[htmlclean-protect]-->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!--[/htmlclean-protect]-->
 </head>
+
 <body>
-	<div>
-		<h1>ECAP Temperature Controller</h1>
-		<h3>Tk3: 254</h3>
-		<h3>Tk2: 254</h3>
-		<h2>Tk1: 50</h2>
-		<h2>St: 250</h2>
-	</div>
-	<div id="control">
-		<input type="text" id="myText" value="Change Setpoint"><br>
-		<button onclick="startController()">Start controller</button><br>
-		<button onclick="saveDataToExcel()">Save to excel</button><br>
-		<input type="checkbox" onclick="checkFluency()"  id="fluency" checked />Save to excel after close<br>
-	</div>
-	<a hidden id="export" class="myButton" download="" href="#">export</a>
-	<!--[htmlclean-protect]-->
-	<!-- inject:js -->
-	<!-- endinject -->
-	<!--[/htmlclean-protect]-->
+    <div>
+        <h1 id="header">ECAP Temperature Controller</h1>
+        <h3 id="tk3">#</h3>
+        <h3 id="tk2">#</h3>
+        <h2 id="tk1">#</h2>
+        <h2 id="set-point">#</h2>
+    </div>
+    <div id="control">
+        <form onsubmit="startController();return false;">
+            <input type="text" id="set-point-input" value="Change Setpoint" pattern="[0-9]|[1-8][0-9]|9[0-9]|[1-4][0-9]{2}|500" title="Only numbers lower than 500">
+            <br>
+            <input id="startButton" type="submit" value="Start controller">
+            <br>
+            <input id="stopButton" type="submit" value="Stop controller">
+            <br>
+        </form>
+        <button onclick="saveDataToExcel()">Save to excel</button>
+        <br>
+        <input type="checkbox" onclick="checkFluency()" id="fluency" checked />Save to excel after close
+        <br>
+    </div>
+    <a hidden id="export" class="myButton" download="" href="#">export</a>
+    <!--[htmlclean-protect]-->
+    <!-- inject:js -->
+    <!-- endinject -->
+    <!--[/htmlclean-protect]-->
 </body>
+
 </html>
