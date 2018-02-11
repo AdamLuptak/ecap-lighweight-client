@@ -7,6 +7,7 @@ var SET_POINT_URL = CONTROLLER_BASE_URL + '/pid/set-point';
 var ACTIVATE_URL = CONTROLLER_BASE_URL + '/pid/activate';
 var FETCH_CONTROLLER_DATA_INTREVAL = 1000;
 var temperatures = [];
+var HEADER = 'tk1,tk2,tk3\n';
 var TEMPERATURES_KEY = 'temperatures';
 var LOCAL_STORAGE_LIMIT = 200000;
 /* jshint undef: false */
@@ -31,6 +32,23 @@ function changeSetPoint() {
 
 function saveDataToExcel() {
     console.log('Saving data to excel');
+    var a = window.document.createElement('a');
+    var contentType = 'text/csv';
+    var CSV = JSON.parse(localStorage.getItem(TEMPERATURES_KEY));
+    CSV = HEADER + CSV.join('\n');
+    var csvFile = new Blob([CSV], { type: contentType });
+    a.href = window.URL.createObjectURL(csvFile);
+    a.download = 'measurement.csv';
+    document.body.appendChild(a);
+    a.click();
+}
+
+window.onbeforeunload = confirmExit;
+
+function confirmExit() {
+    if (document.getElementById('save-to-excel-after-close').checked) {
+        saveDataToExcel();
+    }
 }
 
 function fetchControllerData() {
@@ -56,7 +74,7 @@ function saveData(controllerData) {
     var newTemperatures = controllerData.temperatures;
     var temperaturesRow = '';
     for (var i = 0; i < newTemperatures.length; i++) {
-        temperaturesRow = temperaturesRow.concat('"' + newTemperatures[i].value + '"');
+        temperaturesRow = temperaturesRow.concat(newTemperatures[i].value);
 
         if (i < newTemperatures.length - 1) {
             temperaturesRow = temperaturesRow.concat(',');
