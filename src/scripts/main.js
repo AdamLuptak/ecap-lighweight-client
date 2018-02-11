@@ -3,7 +3,8 @@
 var CONTROLLER_BASE_URL = 'http://localhost:8080/testing676/ecap/1.0.0';
 var CONTROLLER_URL = CONTROLLER_BASE_URL + '/controller-data';
 var PID_URL = CONTROLLER_BASE_URL + '/pid';
-var SET_POINT_URL = CONTROLLER_BASE_URL + '/set-point';
+var SET_POINT_URL = CONTROLLER_BASE_URL + '/pid/set-point';
+var ACTIVATE_URL = CONTROLLER_BASE_URL + '/pid/activate';
 var FETCH_CONTROLLER_DATA_INTREVAL = 1000;
 var temperatures = [];
 var TEMPERATURES_KEY = 'temperatures';
@@ -11,14 +12,14 @@ var LOCAL_STORAGE_LIMIT = 200000;
 /* jshint undef: false */
 window.onload = function() { setTimeout(function() { document.body.style.opacity = '100'; }, 1000); };
 
-function startController() {
+function changeSetPoint() {
     console.log('Start Ecap Controller');
     var request = new XMLHttpRequest();
 
     request.open('POST', SET_POINT_URL);
     request.setRequestHeader('Content-Type', 'application/json');
     request.onload = function() {
-        if (request.status === 201) {
+        if (request.status === 200) {
             console.log('Set point udpated');
         } else if (request.status !== 200) {
             console.log('An error occurred during the transaction POST new setPoint');
@@ -61,9 +62,27 @@ function saveData(controllerData) {
             temperaturesRow = temperaturesRow.concat(',');
         }
     }
-
     temperatures.push(temperaturesRow);
     upsertDataLocalStorage(temperaturesRow);
+}
+
+function toggleRegulator(isTurnOn) {
+    console.log(isTurnOn);
+    if (isTurnOn) {
+        localStorage.removeItem(TEMPERATURES_KEY);
+    }
+    var request = new XMLHttpRequest();
+
+    request.open('POST', ACTIVATE_URL);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.onload = function() {
+        if (request.status === 200) {
+            console.log('Regulator state change to: ' + isTurnOn);
+        } else if (request.status !== 200) {
+            console.log('An error occurred during the transaction POST new setPoint');
+        }
+    };
+    request.send(JSON.stringify({ activate: isTurnOn }));
 }
 
 function upsertDataLocalStorage(temperaturesRow) {
@@ -86,13 +105,12 @@ function updateHtmlData(controllerData) {
     if (controllerData.pid.activate) {
         document.getElementById('startButton').style.display = 'none';
         document.getElementById('stopButton').style.display = 'inline';
-        document.getElementById('set-point-input').style.display = 'none';
     } else {
         document.getElementById('stopButton').style.display = 'none';
         document.getElementById('startButton').style.display = 'inline';
-        document.getElementById('set-point-input').style.display = 'inline';
     }
 
+    document.getElementById('controller-state').innerHTML = ' STATE: ' + (controllerData.pid.activate ? 'ON' : 'OFF');
     document.getElementById('header').innerHTML = 'ECAP Temperature Controller';
     document.getElementById('set-point').innerHTML = 'Setpoint: ' + controllerData.pid.setPoint + '°C';
     var temperatures = controllerData.temperatures;

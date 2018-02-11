@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <!--[htmlclean-protect]-->
     <!-- inject:css -->
     <!-- endinject -->
@@ -12,20 +12,21 @@
 <body>
     <div>
         <h1 id="header">ECAP Temperature Controller</h1>
+        <h3 id="controller-state">#</h3>
         <h3 id="tk3">#</h3>
         <h3 id="tk2">#</h3>
         <h2 id="tk1">#</h2>
         <h2 id="set-point">#</h2>
     </div>
     <div id="control">
-        <form onsubmit="startController();return false;">
-            <input type="text" id="set-point-input" value="Change Setpoint" pattern="[0-9]|[1-8][0-9]|9[0-9]|[1-4][0-9]{2}|500" title="Only numbers lower than 500">
+        <form onsubmit="changeSetPoint();return false;">
+            <input type="text" id="set-point-input" value="Change Setpoint" pattern="[0-9]|[1-8][0-9]|9[0-9]|[1-4][0-9]{2}|500" title="Only numbers <0,500>">
             <br>
-            <input id="startButton" type="submit" value="Start controller">
-            <br>
-            <input id="stopButton" type="submit" value="Stop controller">
-            <br>
+            <input type="submit" value="Change SetPoint">
         </form>
+        <button id="startButton" onclick="toggleRegulator(true)">Start regulator</button>
+        <button id="stopButton" onclick="toggleRegulator(false)">Stop regulator</button>
+        <br>
         <button onclick="saveDataToExcel()">Save to excel</button>
         <br>
         <input type="checkbox" onclick="checkFluency()" id="fluency" checked />Save to excel after close

@@ -93,6 +93,7 @@ gulp.task('css:dist', ['sass'], function() {
         .pipe(cleanCSS())
         .pipe(gulp.dest(paths.dist));
 });
+
 gulp.task('js:dist', ['lint'], function() {
     return gulp.src(paths.srcJS)
         .pipe(concat('script.min.js'))
@@ -142,16 +143,22 @@ gulp.task('lint', function() {
     // }, fail("Linting finished with errors!", true)));
 })
 
-gulp.task('escape-quotes', function() {
+gulp.task('escape-quotes', ['build'], function() {
     return gulp.src(paths.dist + '/index.html')
         .pipe(jsEscape())
         .pipe(gulp.dest(paths.dist));
 })
 
+gulp.task('backup-arduino', function() {
+    return gulp.src('C:\\Users\\adam\\git\\ecap\\arduino\\src\\main.cpp')
+        .pipe(gulp.dest('C:\\Users\\adam\\git\\ecap\\arduino\\src\\main_backup.cpp'));
+})
+
 gulp.task('inject-html-to-cpp', ['escape-quotes'], function() {
     var distHtml = fs.readFileSync(paths.dist + '/index.html', 'utf8');
+
     return gulp.src('C:\\Users\\adam\\git\\ecap\\arduino\\src\\main.cpp')
-        .pipe(replace('"html"', distHtml))
-        .pipe(rename('main-html.cpp'))
+        .pipe(replace(/const char indexHtml.*/g, 'const char indexHtml[] PROGMEM = {"htmlIndex"};'))
+        .pipe(replace('"htmlIndex"', distHtml))
         .pipe(gulp.dest('C:\\Users\\adam\\git\\ecap\\arduino\\src\\'));
 })
