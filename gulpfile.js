@@ -37,7 +37,7 @@ var paths = {
     tmpCSS: 'tmp/**/*.css',
     tmpJS: 'tmp/**/*.js',
     dist: 'dist',
-    distIndex: 'dist/index.html',
+    distIndex: 'dist/*.html',
     distCSS: 'dist/**/*.css',
     distJS: 'dist/**/*.js'
 };

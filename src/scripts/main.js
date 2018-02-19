@@ -1,6 +1,6 @@
 /*jslint node: true */
 'use strict';
-var CONTROLLER_BASE_URL = 'http://localhost:8080/testing676/ecap/1.0.0';
+var CONTROLLER_BASE_URL = 'http://192.168.1.177';
 var CONTROLLER_URL = CONTROLLER_BASE_URL + '/controller-data';
 var PID_URL = CONTROLLER_BASE_URL + '/pid';
 var SET_POINT_URL = CONTROLLER_BASE_URL + '/pid/set-point';
@@ -16,8 +16,9 @@ window.onload = function() { setTimeout(function() { document.body.style.opacity
 function changeSetPoint() {
     console.log('Start Ecap Controller');
     var request = new XMLHttpRequest();
+    var newSetPoint = document.getElementById('set-point-input').value;
 
-    request.open('POST', SET_POINT_URL);
+    request.open('POST', SET_POINT_URL + '?setPoint=' + newSetPoint);
     request.setRequestHeader('Content-Type', 'application/json');
     request.onload = function() {
         if (request.status === 200) {
@@ -26,8 +27,26 @@ function changeSetPoint() {
             console.log('An error occurred during the transaction POST new setPoint');
         }
     };
-    var newSetPoint = document.getElementById('set-point-input').value;
-    request.send(JSON.stringify({ setPoint: newSetPoint }));
+    request.send();
+}
+
+function changePid(e) {
+    var queryParameters = '?';
+    queryParameters = queryParameters + 'kp=' + e.currentTarget[0].value + '&';
+    queryParameters = queryParameters + 'ki=' + e.currentTarget[1].value + '&';
+    queryParameters = queryParameters + 'kd=' + e.currentTarget[2].value;
+
+    var request = new XMLHttpRequest();
+    request.open('POST', PID_URL + queryParameters);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.onload = function() {
+        if (request.status === 200) {
+            console.log('Pid change');
+        } else if (request.status !== 200) {
+            console.log('An error occurred during the transaction POST new setPoint');
+        }
+    };
+    request.send();
 }
 
 function saveDataToExcel() {
@@ -91,8 +110,8 @@ function toggleRegulator(isTurnOn) {
     }
     var request = new XMLHttpRequest();
 
-    request.open('POST', ACTIVATE_URL);
-    request.setRequestHeader('Content-Type', 'application/json');
+    request.open('POST', ACTIVATE_URL + '?activate=' + isTurnOn);
+
     request.onload = function() {
         if (request.status === 200) {
             console.log('Regulator state change to: ' + isTurnOn);
@@ -131,6 +150,10 @@ function updateHtmlData(controllerData) {
     document.getElementById('controller-state').innerHTML = ' STATE: ' + (controllerData.pid.activate ? 'ON' : 'OFF');
     document.getElementById('header').innerHTML = 'ECAP Temperature Controller';
     document.getElementById('set-point').innerHTML = 'Setpoint: ' + controllerData.pid.setPoint + '°C';
+    document.getElementById('kp').innerHTML = 'kp: ' + controllerData.pid.kp;
+    document.getElementById('ki').innerHTML = 'ki: ' + controllerData.pid.ki;
+    document.getElementById('kd').innerHTML = 'kd: ' + controllerData.pid.kd;
+
     var temperatures = controllerData.temperatures;
     for (var i = 0; i < temperatures.length; i++) {
         var temperature = temperatures[i];

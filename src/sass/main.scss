@@ -1,7 +1,18 @@
 	body {
-		text-align: center;
-		opacity:0;
+	    text-align: center;
+	    opacity: 0;
+	    font-size: calc(0.75em + 1vmin);
 	}
-	.control, input, button{
-		margin: 0 0 20px 0;
+
+	@media screen and (max-width: 800px) {
+	    input,
+	    button {
+	        padding: 15px 32px;
+	    }
+	}
+
+	.control,
+	input,
+	button {
+	    margin: 0 0 20px 0;
 	}
