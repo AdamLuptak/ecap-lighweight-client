@@ -10,8 +10,11 @@ var temperatures = [];
 var HEADER = 'tk1,tk2,tk3\n';
 var TEMPERATURES_KEY = 'temperatures';
 var LOCAL_STORAGE_LIMIT = 200000;
+var MAX_ALLOW_TEMPERATURE = 500;
 /* jshint undef: false */
-window.onload = function() { setTimeout(function() { document.body.style.opacity = '100'; }, 1000); };
+window.onload = function() {
+    setTimeout(function() { document.body.style.opacity = '100'; }, 1000);
+};
 
 function changeSetPoint() {
     console.log('Start Ecap Controller');
@@ -34,7 +37,8 @@ function changePid(e) {
     var queryParameters = '?';
     queryParameters = queryParameters + 'kp=' + e.currentTarget[0].value + '&';
     queryParameters = queryParameters + 'ki=' + e.currentTarget[1].value + '&';
-    queryParameters = queryParameters + 'kd=' + e.currentTarget[2].value;
+    queryParameters = queryParameters + 'kd=' + e.currentTarget[2].value + '&';
+    queryParameters = queryParameters + 'minOutput=' + e.currentTarget[3].value;
 
     var request = new XMLHttpRequest();
     request.open('POST', PID_URL + queryParameters);
@@ -55,7 +59,7 @@ function saveDataToExcel() {
     var contentType = 'text/csv';
     var CSV = JSON.parse(localStorage.getItem(TEMPERATURES_KEY));
     CSV = HEADER + CSV.join('\n');
-    var csvFile = new Blob([CSV], { type: contentType });
+    var csvFile = new Blob([CSV], { type: "application/csv" });
     a.href = window.URL.createObjectURL(csvFile);
     a.download = 'measurement.csv';
     document.body.appendChild(a);
@@ -138,6 +142,7 @@ function upsertDataLocalStorage(temperaturesRow) {
     }
 }
 
+
 function updateHtmlData(controllerData) {
     if (controllerData.pid.activate) {
         document.getElementById('startButton').style.display = 'none';
@@ -153,11 +158,29 @@ function updateHtmlData(controllerData) {
     document.getElementById('kp').innerHTML = 'kp: ' + controllerData.pid.kp;
     document.getElementById('ki').innerHTML = 'ki: ' + controllerData.pid.ki;
     document.getElementById('kd').innerHTML = 'kd: ' + controllerData.pid.kd;
+    document.getElementById('min-output').innerHTML = 'minOutput: ' + controllerData.pid.minOutput;
+
 
     var temperatures = controllerData.temperatures;
+    var overHeatTemperature = {};
+
     for (var i = 0; i < temperatures.length; i++) {
         var temperature = temperatures[i];
+        var header = document.getElementById('header');
+        if (temperature.value > MAX_ALLOW_TEMPERATURE) {
+            overHeatTemperature = temperature;
+        }
+
         document.getElementById(temperature.name).innerHTML = temperature.name + ': ' + temperature.value + '°C';
+    }
+
+    if (overHeatTemperature.name != null) {
+        document.getElementById('control').style.display = 'none'
+        header.style.color = 'red';
+        header.innerHTML = 'SYSTEM IS IN DANGER STATE </br>TEMPERATURE ' + overHeatTemperature.name + ' is: ' + overHeatTemperature.value + '°C </br>MAX ALLOW TEMPERATURE IS: ' + MAX_ALLOW_TEMPERATURE + ' °C';
+    } else if (header.style.color === 'red') {
+        document.getElementById('control').style.display = 'inline';
+        header.style.color = 'black';
     }
 }
 
